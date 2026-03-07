@@ -11,6 +11,9 @@
 *.ilk
 *.pdb
 
+# build
+.build/
+
 # 3. Competitive Programming Helper (CPH) & Test Data
 .cph/
 *.in
