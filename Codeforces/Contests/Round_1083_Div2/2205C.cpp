@@ -27,9 +27,34 @@ void solve() {
         a[i] = b;
     }
 
-   auto ops = [&] (vector<ll>& a, vector<ll>& b) {
-        
-   };
+    map<ll, bool> used;
+    auto ops = [&] (vector<ll>& a, vector<ll>& b) {
+        vector<ll> c, d;
+        for(auto x : a) {
+            if(!used[x]) c.push_back(x);
+        }
+        for(auto x : b) {
+            if(!used[x]) d.push_back(x);
+        }
+        return (c < d);
+    };
+ 
+    vector<ll> ans;
+    for (ll i = 0; i < n; i++) {
+        ll idx = i;
+        for (ll j = i; j < n; j++) {
+            if(ops(a[j], a[idx])) idx = j;
+        }
+        for(auto x : a[idx]) {
+            if(used[x]) continue;
+            used[x] = true;
+            ans.push_back(x);
+        }
+        swap(a[i], a[idx]);
+    }
+    
+    for(auto x : ans) cout << x << " ";
+    cout << endl;
 }
 
 int main() {
