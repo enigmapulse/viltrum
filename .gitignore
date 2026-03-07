@@ -1,0 +1,22 @@
+# 1. Compiled Executables and Object Files
+*.exe
+*.out
+*.o
+*.obj
+*.app
+
+# 2. Debugging and Profiling
+*.dSYM/
+*.su
+*.ilk
+*.pdb
+
+# 3. Competitive Programming Helper (CPH) & Test Data
+.cph/
+*.in
+*.ans
+*.txt
+
+# 4. OS Junk
+.DS_Store
+Thumbs.db
