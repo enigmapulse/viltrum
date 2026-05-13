@@ -4,6 +4,7 @@
 *.o
 *.obj
 *.app
+*.json
 
 # 2. Debugging and Profiling
 *.dSYM/
