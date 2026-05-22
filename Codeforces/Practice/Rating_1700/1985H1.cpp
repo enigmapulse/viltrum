@@ -97,7 +97,8 @@ void solve() {
         for (ll i = 0; i < n; i++) {
             if(grid[i][j] == '#') {
                 auto root = st.find(i * m + j);
-                if(s.insert(root).second) {
+                if(s.insert(root
+                ).second) {
                     col[j] += st.size[root];
                 }
             }
