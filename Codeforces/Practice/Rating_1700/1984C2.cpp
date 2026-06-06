@@ -8,6 +8,20 @@ const ll MOD = 998244353;
 
 using namespace std;
 
+ll binpow(ll base, ll exp) {
+    ll res = 1;
+    while (exp > 0) {
+        if (exp % 2 == 1) res = (res * base) % MOD;
+        base = (base * base) % MOD;
+        exp /= 2;
+    }
+    return res;
+}
+
+ll modinv(ll num) {
+    return binpow(num, MOD - 2);
+}
+
 bool multipleTests = true;
 
 void solve() {
@@ -21,32 +35,26 @@ void solve() {
         mx[i] = max(abs(mx[i - 1] + a[i]), abs(mn[i - 1] + a[i]));
     }
 
-    vector<ll> dp1(n, 0), dp2(n, 0); dp1[0] = dp2[0] = 1;
-    for (ll i = 0; i < n - 1; i++) {
-        ll cnt = 0;
-        cnt += (mn[i] + a[i + 1] == mx[i + 1]);
-        cnt += (abs(mn[i] + a[i + 1]) == mx[i + 1]);
-        dp1[i + 1] = (dp1[i + 1] + dp2[i] * cnt) % MOD;
+    ll curr1 = 1, curr2 = 1;
+    for (ll i = 1; i < n; i++) {
+        ll temp1 = 0, temp2 = 0;
+        if(mx[i - 1] + a[i] == mx[i]) temp1 = (temp1 + curr1) % MOD;
+        if(abs(mx[i - 1] + a[i]) == mx[i]) temp1 = (temp1 + curr1) % MOD;
+        if(mx[i - 1] + a[i] == mn[i]) temp2 = (temp2 + curr1) % MOD;
+        if(abs(mx[i - 1] + a[i]) == mn[i]) temp2 = (temp2 + curr1) % MOD;
 
-        cnt = 0;
-        cnt += (mn[i] + a[i + 1] == mn[i + 1]);
-        cnt += (abs(mn[i] + a[i + 1]) == mn[i + 1]);
-        dp2[i + 1] = (dp2[i + 1] + dp2[i] * cnt) % MOD;
+        if(mn[i - 1] + a[i] == mx[i]) temp1 = (temp1 + curr2) % MOD;
+        if(abs(mn[i - 1] + a[i]) == mx[i]) temp1 = (temp1 + curr2) % MOD;
+        if(mn[i - 1] + a[i] == mn[i]) temp2 = (temp2 + curr2) % MOD;
+        if(abs(mn[i - 1] + a[i]) == mn[i]) temp2 = (temp2 + curr2) % MOD;
 
-        if(mn[i] != mx[i]) {
-            cnt = 0;
-            cnt += (mx[i] + a[i + 1] == mx[i + 1]);
-            cnt += (abs(mx[i] + a[i + 1]) == mx[i + 1]);
-            dp1[i + 1] = (dp1[i + 1] + dp1[i] * cnt) % MOD;
-        
-
-            cnt = 0;
-            cnt += (mx[i] + a[i + 1] == mn[i + 1]);
-            cnt += (abs(mx[i] + a[i + 1]) == mn[i + 1]);
-            dp2[i + 1] = (dp2[i + 1] + dp1[i] * cnt) % MOD;
+        if(mx[i] == mn[i] && i != n - 1) {
+            temp1 = (temp1 * modinv(2)) % MOD;
+            temp2 = (temp2 * modinv(2)) % MOD;
         }
+        curr1 = temp1, curr2 = temp2;
     }
-    cout << dp1[n - 1] % MOD << endl;
+    cout << curr1 << endl;
 }
 
 int main() {

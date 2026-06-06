@@ -4,6 +4,8 @@
 #define all(x) (x).begin(), (x).end()
 #define inarr(a, n) for (int _i = 0; _i < (n); _i++) cin >> (a)[_i];
 #define invec(v) for (auto &_x : (v)) cin >> _x;
+const ll INF  = 1e15;
+#define plb  pair<ll, bool>
 
 using namespace std;
 
@@ -11,55 +13,56 @@ bool multipleTests = true;
 
 void solve() {
     ll n; cin >> n;
-    vector<int> a; inarr(a, n);
+    vector<ll> a(n); inarr(a, n);
 
-    vector<int> z ={-1};
-    vector<int> neg(n, 0), two(n, 0);
+    vector<ll> z = {-1};
+    vector<ll> neg(n, 0), two(n, 0);
     for (ll i = 0; i < n; i++) {
-        if(a[i] == 0) a.push_back(i);
-        if(a[i] < 0) neg[i] = 1;
-        if(abs(a[i]) == 2) two[i] = 1;
-        if(i != 0) {
-            neg[i] += neg[i - 1];
-            two[i] += two[i - 1];
-        }
+        if(a[i] == 0) z.push_back(i);
     }
     z.push_back(n);
 
-    ll mx = -1e15, l = n, r = 0;
-    for (ll i = 0; i < z.size() - 1; i++) {
-        ll left = z[i], right = z[i + 1];
-        if(left == right - 1) continue;
-        bool chk = ((neg[right - 1] - (left > -1 ? neg[left] : 0)) & 1);
-        if(!chk) {
-            ll numof2 = two[right - 1] - two[left + 1];
-            if(numof2 > mx) {
-                mx = numof2;
-                l = left + 1;
-                r = n - right + 1;
+    ll mx = 0; ll l = 0, r = -1;
+    for (ll s = 0; s < z.size() - 1; s++) {
+        ll start = z[s];
+        ll end = z[s + 1];
+        if(start + 1 == end) continue;
+        ll tot = 0; ll parity = 0;
+
+        plb first_neg = {start, false}; ll ct1 = 0;
+        plb last_neg = {end, false}; ll ct2 = 0;
+        for (ll i = start + 1; i < end; i++) {
+            if(!first_neg.second && abs(a[i]) == 2) ct1++;
+
+            if(a[i] < 0) {
+                ct2 = 0; parity++;
+                if(!first_neg.second) {
+                    first_neg.first = i;
+                    first_neg.second = true;
+                } 
+                last_neg.first = i;
+            }
+
+            if(!last_neg.second && abs(a[i]) == 2) ct2++;
+            if(abs(a[i]) == 2) tot++;
+        }
+        if(parity & 1) {
+            if(mx < tot - ct1) {
+                mx = tot - ct1;
+                l = first_neg.first + 1, r = end - 1;
+            }
+            if(mx < tot - ct2){
+                mx = tot - ct2;
+                l = start + 1, r = last_neg.first - 1;
             }
         }
-        else {
-            auto choice1 = lower_bound(all(neg), (left > -1 ? neg[left] : 0) + 1);
-            auto choice2 = upper_bound(all(neg), neg[right - 1] - 1);
-            if(choice1 != neg.end() && *choice1 < right - 1 && !((neg[right - 1] - (*choice1 > -1 ? neg[*choice1] : 0)) & 1)) {
-                ll numof2 = two[right - 1] - two[*choice1];
-                if(numof2 > mx) {
-                    mx = numof2;
-                    l = *choice1 + 1;
-                    r = n - right + 1;
-                }
-            }
-            if(choice2 != neg.end() && *choice1 < right - 1) {
-                ll numof2 = two[right - 1] - two[*choice1];
-                if(numof2 > mx) {
-                    mx = numof2;
-                    l = *choice1 + 1;
-                    r = n - right + 1;
-                }
-            }
+        else if(mx < tot) {
+            mx = tot;
+            l = start + 1, r = end - 1;
         }
     }
+
+    cout << l << " " << n - 1 - r << endl;
 }
 
 int main() {
