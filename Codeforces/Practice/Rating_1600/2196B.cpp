@@ -13,11 +13,22 @@ void solve() {
     ll n; cin >> n;
     vector<ll> a(n); inarr(a, n);
 
-    ll cnt = 0;
+    vector<vector<ll>> mp(n);
     for (ll i = 0; i < n; i++) {
-        ll val = a[i];
-        for (ll j = 1; j * val <= n; j++) {
-            if(a[i + j * val] == j) cnt++;
+        if(a[i] < n) mp[a[i]].push_back(i);
+    }
+    
+    ll cnt = 0;
+    for (ll k = 1; k < n; k++) {
+        for (ll i = 1; i * i <= k; i++) {
+            if(k % i != 0) continue;
+            ll x = i, y = k / i;
+            // I need to count pairs which have a[j] = i and a[j + k] = k / i
+            if(mp[x].size() > mp[y].size()) swap(x, y);
+            for(auto idx : mp[x]) {
+                if(idx - k >= 0 && a[idx - k] == y) cnt++;
+                if(x != y && idx + k < n && a[idx + k] == y) cnt++;
+            }
         }
     }
     cout << cnt << endl;

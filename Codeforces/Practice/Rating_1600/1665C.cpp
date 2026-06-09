@@ -13,25 +13,41 @@ void solve() {
     ll n; cin >> n; 
     vector<ll> a(n + 1); a[1] = 1; inarr(a, n);
 
-    vector<vector<ll>> adj(n + 1);
-    for (ll i = 1; i <= n; i++) adj[a[i]].push_back(i);
-
-    vector<ll> layers(n + 1, 0);
-    for (ll i = 1; i <= n; i++) layers[i] = adj[i].size();
+    vector<ll> child(n + 1, 0);
+    for (ll i = 2; i <= n; i++) child[a[i]]++; 
     
-    ll ops = 1;
-    for (ll i = 0; i < n; i++) {
-        if(layers[i] > 0) {
-            ops++; layers[i]--;
+    ll cnt = 0;
+    for (ll i = 1; i <= n; i++) {
+        if(child[i] > 0) {
+            cnt++; child[i]--;
         }
     }
-    ll levy = ops - 1;
-    for (ll i = 0; i < n; i++) {
-        ll rem = min(levy, layers[i]);
-        levy -= rem; layers[i] -= rem; 
-        ops += (layers[i] + 1) / 2;
+    cnt++;
+    sort(child.begin() + 1, child.end(), greater()); ll bal = cnt - 1;
+    for (ll i = 1; i <= n; i++) {
+        if(child[i] > 0) {
+            ll diff = max(0ll, min(child[i], bal));
+            child[i] -= diff;
+            bal--;
+        }
     }
-    cout << ops << endl;
+
+    auto chk = [&] (ll x) {
+        ll cnt = 0;
+        for (ll i = 1; i <= n; i++) {
+            if(child[i] - x > 0) cnt += (child[i] - x);
+        }
+        return (cnt <= x);
+    };
+
+    ll lo = 0, hi = *max_element(all(child));
+    while(lo < hi) {
+        ll mid = lo + (hi - lo)/2;
+        if(chk(mid)) hi = mid;
+        else lo = mid + 1;
+    }
+
+    cout << cnt + lo << endl;
 }
 
 int main() {

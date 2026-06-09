@@ -40,6 +40,7 @@ void solve() {
             if(abs(unreached[i] - unreached[i-1]) > 1) need++;
         }
         cnt += need + 1;
+        for(auto idx : pos) reached[idx] = true; 
     }
     
     cout << cnt << endl;
