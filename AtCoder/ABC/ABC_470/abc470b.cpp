@@ -4,31 +4,20 @@
 #define all(x) (x).begin(), (x).end()
 #define inarr(a, n) for (int _i = 0; _i < (n); _i++) cin >> (a)[_i];
 #define invec(v) for (auto &_x : (v)) cin >> _x;
-const ll INF = 1e16;
 
 using namespace std;
 
-bool multipleTests = true;
+bool multipleTests = false;
 
 void solve() {
     ll n; cin >> n;
-    string s; cin >> s;
-    vector<ll> a(n); inarr(a, n);
-
-    ll tot = 0;
+    map<ll, ll> cnt; ll mx = 0;
     for (ll i = 0; i < n; i++) {
-        if(s[i] == '0') tot += a[i];
+        ll x; cin >> x;
+        cnt[x]++;
+        mx = max(mx, cnt[x]);
     }
-    
-    ll best = INF;
-    ll curr = 0, mx = -INF;
-    for (ll i = 0; i < n; i++) {
-        mx = max(mx, curr);
-        if(s[i] == '1') curr += a[i];
-        else curr -= a[i];
-        best = min(best, curr - mx);
-    }
-    cout << tot + min(best, 0ll) << endl;
+    cout << n - mx << endl;
 }
 
 int main() {
